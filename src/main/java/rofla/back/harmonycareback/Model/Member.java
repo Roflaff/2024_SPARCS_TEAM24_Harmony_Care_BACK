@@ -13,7 +13,7 @@ import java.time.LocalDate;
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_id", nullable = false)
+    @Column(name = "id", nullable = false)
     private Long id;
 
     // 실제 아이디(회원가입 정보에서 받는 아이디)
@@ -25,11 +25,11 @@ public class Member {
     private String password;
 
     // 권한 설정 (S / P / A) (시니어 / 부모 / 관리자)
-    @Column(name = "role", nullable = false, length = 8)
+    @Column(name = "role", nullable = false, length = 2)
     private String role;
 
     // 실제 이름
-    @Column(name = "name", nullable = false, length = 30)
+    @Column(name = "name", length = 30)
     private String name;
 
     // 나이 (LocalDate 형식으로 나중에 변환 필요)

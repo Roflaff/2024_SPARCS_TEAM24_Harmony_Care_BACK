@@ -3,6 +3,7 @@ package rofla.back.harmonycareback.Controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import rofla.back.harmonycareback.Model.Member;
@@ -15,8 +16,9 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/join")
-    public ResponseEntity<String> joinMember(Member member) {
+    public ResponseEntity<String> joinMember(@RequestBody Member member) {
         try {
+            System.out.println(member.getPassword());
             memberService.joinMember(member);
             return ResponseEntity.ok("join suc!");
         } catch (IllegalArgumentException e) {
