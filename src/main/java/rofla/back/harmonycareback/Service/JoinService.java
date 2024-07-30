@@ -32,6 +32,9 @@ public class JoinService {
         data.setPassword(bCryptPasswordEncoder.encode(password));
         data.setName(joinDTO.getName());
         data.setRole(joinDTO.getRole());
+        data.setAge(joinDTO.getAge());
+        data.setRegin(joinDTO.getRegin());
+        data.setPhoneNum(joinDTO.getPhoneNum());
 
         memberRepository.save(data);
     }

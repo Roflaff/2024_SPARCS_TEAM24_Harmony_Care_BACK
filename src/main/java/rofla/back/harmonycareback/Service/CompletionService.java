@@ -1,5 +1,6 @@
 package rofla.back.harmonycareback.Service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+@RequiredArgsConstructor
 @Service
 public class CompletionService {
 
@@ -25,10 +27,6 @@ public class CompletionService {
     private String requestId;
 
     private final RestTemplate restTemplate;
-
-    public CompletionService(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-    }
 
     public ResponseEntity<String> execute(String completionRequest) {
         String url = host + "/testapp/v1/chat-completions/HCX-DASH-001";

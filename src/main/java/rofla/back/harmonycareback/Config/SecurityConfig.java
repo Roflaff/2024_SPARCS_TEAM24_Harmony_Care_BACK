@@ -52,7 +52,7 @@ public class SecurityConfig {
                     public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
 
                         CorsConfiguration configuration = new CorsConfiguration();
-                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
                         configuration.setAllowedMethods(Collections.singletonList("*"));
                         configuration.setAllowCredentials(true);
                         configuration.setAllowedHeaders(Collections.singletonList("*"));
@@ -60,7 +60,8 @@ public class SecurityConfig {
 
                         configuration.setExposedHeaders(Collections.singletonList("Authorization"));
 
-                        return null;
+
+                        return configuration;
                     }
                 }));
 
@@ -77,7 +78,7 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/login", "/", "/Member/join", "/join", "/main", "/main/test").permitAll()
+                        .requestMatchers("/login", "/", "/Member/join", "/join", "/findUsername/{username}").permitAll()
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .requestMatchers("/reissue").permitAll()
                         .anyRequest().authenticated() //이외의 요청에는 인증이 필요하다 ( 로그인 )
