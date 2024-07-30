@@ -11,6 +11,7 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "member", schema = "sparcs")
 public class Member {
+    // DB 접근을 위한 함수
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -35,5 +36,21 @@ public class Member {
     // 나이 (LocalDate 형식으로 나중에 변환 필요)
     @Column(name = "age")
     private LocalDate age;
+
+    // 별점
+    @Column(name = "star")
+    private double star;
+
+    // 이메일
+    @Column(name = "e_mail", length = 40)
+    private String eMail;
+
+    // 거주지
+    @Column(name = "regin", length = 500)
+    private String regin;
+
+    // 전화번호
+    @Column(name = "phone_num", length = 11)
+    private String phoneNum;
 
 }
