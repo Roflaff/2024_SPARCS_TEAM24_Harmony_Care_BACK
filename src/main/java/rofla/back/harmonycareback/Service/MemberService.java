@@ -10,6 +10,7 @@ import rofla.back.harmonycareback.Model.Member;
 import rofla.back.harmonycareback.Repository.MemberRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -53,5 +54,9 @@ public class MemberService {
 
     public List<Member> getALl() {
         return memberRepository.findAll();
+    }
+
+    public Optional<Member> searchByUsername(String username){
+        return memberRepository.findByUsername(username);
     }
 }

@@ -43,10 +43,10 @@ public class JoinService {
     public String searchUsername(String username) {
         Boolean isExist = memberRepository.existsByUsername(username);
         if(isExist) {
-            return "동일한 아이디 존재";
+            return "동일한 아이디가 존재합니다.";
         }
         else {
-            return "사용 가능한 아이디";
+            return "사용 가능한 아이디 입니다.";
         }
     }
 }

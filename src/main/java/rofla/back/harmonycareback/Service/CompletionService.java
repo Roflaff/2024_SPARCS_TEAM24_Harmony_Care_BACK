@@ -17,13 +17,13 @@ public class CompletionService {
     @Value("${api.host}")
     private String host;
 
-    @Value("${api.key}")
+    @Value("${api.keyH}")
     private String apiKey;
 
-    @Value("${api.key.primary.val}")
+    @Value("${api.key.primary.valH}")
     private String apiKeyPrimaryVal;
 
-    @Value("${api.request.id}")
+    @Value("${api.request.idH}")
     private String requestId;
 
     private final RestTemplate restTemplate;

@@ -21,16 +21,16 @@ public class MemberFeat {
     private String type;
 
     // 특징 1
-    @Column(name = "f1", length = 20)
-    private String f1;
+    @Column(name = "f1_c", length = 20)
+    private String f1C;
 
     // 특징 2
-    @Column(name = "f2", length = 20)
-    private String f2;
+    @Column(name = "f2_c", length = 20)
+    private String f2C;
 
     // 특징 3
-    @Column(name = "f3", length = 20)
-    private String f3;
+    @Column(name = "f3_c", length = 20)
+    private String f3C;
 
     // CLOVA studio 결과 or 사용자 Input
     @Column(name = "explain_text", length = 3000)
@@ -52,5 +52,14 @@ public class MemberFeat {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "member_id_feat", nullable = false, referencedColumnName = "username")
     private Member memberIdFeat;
+
+    @Column(name = "f1_h", length = 20)
+    private String f1H;
+
+    @Column(name = "f2_h", length = 20)
+    private String f2H;
+
+    @Column(name = "f3_h", length = 20)
+    private String f3H;
 
 }

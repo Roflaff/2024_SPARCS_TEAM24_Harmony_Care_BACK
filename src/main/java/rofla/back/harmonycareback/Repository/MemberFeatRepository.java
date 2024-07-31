@@ -10,4 +10,5 @@ import java.util.List;
 @Repository
 public interface MemberFeatRepository extends JpaRepository<MemberFeat, Long> {
     List<MemberFeat> findByMemberIdFeat(Member memberIdFeat);
+    List<MemberFeat> findByType(String type);
 }
