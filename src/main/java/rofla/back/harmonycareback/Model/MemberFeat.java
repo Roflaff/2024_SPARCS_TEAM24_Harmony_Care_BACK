@@ -62,4 +62,7 @@ public class MemberFeat {
     @Column(name = "f3_h", length = 20)
     private String f3H;
 
+    @Column(name = "c_name", length = 5)
+    private String cName;
+
 }

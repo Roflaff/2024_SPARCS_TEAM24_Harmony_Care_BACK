@@ -26,8 +26,11 @@ public class CompletionService {
     @Value("${api.request.idH}")
     private String requestId;
 
+
     private final RestTemplate restTemplate;
 
+
+    // H 하모니 키워드 => 줄 글
     public ResponseEntity<String> execute(String completionRequest) {
         String url = host + "/testapp/v1/chat-completions/HCX-DASH-001";
 

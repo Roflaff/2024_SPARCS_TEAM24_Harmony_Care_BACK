@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rofla.back.harmonycareback.Dto.ListOfHermonyRespone;
+import rofla.back.harmonycareback.Dto.SaveTextHProfileDTORequest;
 import rofla.back.harmonycareback.Dto.addMemberFeatDTO;
 import rofla.back.harmonycareback.Jwt.JWTUtil;
 import rofla.back.harmonycareback.Model.Member;
@@ -42,9 +43,9 @@ public class MainPageController {
     }
 
     // 둘 다 허용
-    @PostMapping("/add")
-    public ResponseEntity<String> addFeat(@RequestBody addMemberFeatDTO memberFeat){
-        memberFeatService.addMemberFeat(memberFeat);
+    @PutMapping("/addFeat")
+    public ResponseEntity<String> updateFeat(@RequestBody addMemberFeatDTO memberFeat, HttpServletRequest http){
+        memberFeatService.addMemberFeat(memberFeat, http);
         return ResponseEntity.ok("ok");
     }
 
@@ -66,6 +67,23 @@ public class MainPageController {
 
         return ResponseEntity.ok(m1);
 
+    }
+
+    @GetMapping("/makeHProfile")
+    public ResponseEntity<String> getTextOfHProfile(HttpServletRequest httpServletRequest) {
+        String temp = memberFeatService.makeHarmonyProfile(httpServletRequest);
+        return ResponseEntity.ok(temp);
+    }
+
+    @PutMapping("/saveHProfile")
+    public ResponseEntity<String> saveTextOfHProfile(@RequestBody SaveTextHProfileDTORequest saveTextHProfileDTORequest, HttpServletRequest http){
+        try {
+            memberFeatService.saveTextOfHProfile(saveTextHProfileDTORequest, http);
+            return ResponseEntity.ok("ok");
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(409).build();
+        }
     }
 
 
