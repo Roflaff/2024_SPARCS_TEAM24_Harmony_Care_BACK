@@ -55,7 +55,7 @@ public class CompletionService {
 
     // H 하모니 키워드 => 줄 글
     public ResponseEntity<String> executeC(String completionCRequest) {
-        String url = host + "/testapp/v1/chat-completions/HCX-DASH-001";
+        String url = host + "/testapp/v1/chat-completions/HCX-003";
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-NCP-CLOVASTUDIO-API-KEY", apiKey);
