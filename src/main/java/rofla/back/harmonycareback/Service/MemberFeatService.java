@@ -13,8 +13,7 @@ import rofla.back.harmonycareback.Model.MemberFeat;
 import rofla.back.harmonycareback.Repository.MemberFeatRepository;
 import rofla.back.harmonycareback.Repository.MemberRepository;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -36,7 +35,6 @@ public class MemberFeatService {
         this.token = http.getHeader("access");
         this.username = jwtUtil.getUsername(token);
         this.role = jwtUtil.getRole(token);
-
         String username = this.username;
         String role = this.role;
 
@@ -56,6 +54,44 @@ public class MemberFeatService {
             mf.setF1H(memberFeat.getF1H());
             mf.setF2H(memberFeat.getF2H());
             mf.setF3H(memberFeat.getF3H());
+
+            // 하모니 제목 설정
+            Map<String, String> mapping = new HashMap<>();
+            mapping.put("책임감 있는", "아이의 모든 것을 책임지는 하모니입니다.");
+            mapping.put("강건한", "우유부단하지 않은 하모니입니다.");
+            mapping.put("사교적인", "처음 보는 아이와도 잘 지내는 하모니입니다.");
+
+            mapping.put("따뜻한", "아이를 따뜻한 진심으로 대하는 하모니입니다.");
+            mapping.put("예리한", "예리한 시선으로 아이를 돌보는 하모니입니다.");
+            mapping.put("손맛 좋은", "맛있고 건강한 음식을 잘하는 하모니입니다.");
+
+            mapping.put("깔끔한", "깔끔한 환경에서 아이를 돌보는 하모니입니다.");
+            mapping.put("정돈된", "정리정돈을 누구보다 잘하는 하모니입니다.");
+            mapping.put("해결가능한", "어떤 상황도 잘 대처하는 하모니입니다.");
+
+            mapping.put("통찰력 있는", "아이를 통찰력 있게 바라보는 하모니입니다.");
+            mapping.put("차분한", "아이를 차분하게 돌보는 하모니입니다.");
+            mapping.put("끈기있는", "아이를 끝까지 기다려주는 하모니입니다.");
+
+            mapping.put("포용적인", "아이의 모든 부분을 안아주는 하모니입니다.");
+            mapping.put("학식있는", "아이에게 많은 것을 알려주는 하모니입니다.");
+            mapping.put("활용 능숙한", "핸드폰을 익숙하게 다루는 하모니입니다.");
+
+            mapping.put("다재다능한", "이것 저것 많은 걸 할 줄 하는 하모니입니다.");
+            mapping.put("유연한", "유연하게 생각할 줄 아는 하모니입니다.");
+            mapping.put("세심한", "세심하게 아이를 돌보는 하모니입니다.");
+
+            mapping.put("협조적인", "아이 부모에게 협조적인 하모니입니다.");
+            mapping.put("꼼꼼한", "아이의 모든 부분을 꼼꼼하게 보는 하모니입니다.");
+            mapping.put("다정한", "토닥토닥 다정하게 돌봐주는 하모니입니다.");
+
+            String[] initialValues = {memberFeat.getF1H(), memberFeat.getF2H(), memberFeat.getF3H()};
+            String randomInitialValue = getRandomInitialValue(initialValues);
+            System.out.println(randomInitialValue);
+            String correspondingValue = mapping.get(randomInitialValue);
+
+            mf.setExtraExplainText(correspondingValue);
+            System.out.println(correspondingValue);
 
             // 하모니 멤버 객체 외래키
             mf.setMemberIdFeat(memberRepository.findByUsername(username).get());
@@ -95,6 +131,13 @@ public class MemberFeatService {
             mf.setMemberIdFeat(memberRepository.findByUsername(username).get());
             memberFeatRepository.save(mf);
         }
+    }
+
+    // 렌덤 으로 시니어 소개 제목 정하기 위한 함수
+    private static String getRandomInitialValue(String[] values) {
+        Random random = new Random();
+        int index = random.nextInt(values.length);
+        return values[index];
     }
 
     // 아이 특징 저장
@@ -169,7 +212,7 @@ public class MemberFeatService {
         String jsonText = "{\n" +
                 "  \"messages\" : [ {\n" +
                 "    \"role\" : \"system\",\n" +
-                "    \"content\" : \"- 너는 아이를 돌보는 일자리에 지원하는 \\\"시니어\\\" 역할이다.\\n- 친근하고 정감있는 말투로 자기소개를 한다.\\n- 사용자가 입력한 단어 3개로 무조건 600자 이상의 문장을 만든다\\n- 각 문단은 들여쓰기로 구분해\\n- 결과는 보기 쉬워야 한다\\n\\n단어 : 책임감 / 체력 / 소통능력 / 응급처치및안전관리 / 인내심 / 문제해결능력 / 관찰력 / 조리및영양지식 / 위생관리 / 감정조절능력 / 안정감 / 문화적다양성\\n###\\n\"\n" +
+                "    \"content\" : \"- 너는 아이를 돌보는 일자리에 지원하는 \\\"시니어\\\" 역할이다.\\n- 친근하고 정감있는 말투로 자기소개를 한다.\\n- \"네 안녕하세요\"는 포합하지 않는다\\n- 사용자가 입력한 단어 3개로 무조건 600자 이상의 문장을 만든다\\n- 각 문단은 들여쓰기로 구분해\\n- 결과는 보기 쉬워야 한다\\n\\n단어 : 책임감 / 체력 / 소통능력 / 응급처치및안전관리 / 인내심 / 문제해결능력 / 관찰력 / 조리및영양지식 / 위생관리 / 감정조절능력 / 안정감 / 문화적다양성\\n###\\n\"\n" +
                 "  }, {\n" +
                 "    \"role\" : \"user\",\n" +
                 "    \"content\" : \"단어 : 관찰력 / 안정감 / 문화적 다양성\"\n" +
@@ -356,8 +399,6 @@ public class MemberFeatService {
 
         return resultText;
     }
-
-    // TODO : 하모니 상세페이지 정보 DTO 전달
 
     // TODO : 하모니 정렬 알고리즘 테스트 (List 전달)
 
