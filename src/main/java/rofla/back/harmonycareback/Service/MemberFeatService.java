@@ -13,9 +13,8 @@ import rofla.back.harmonycareback.Model.MemberFeat;
 import rofla.back.harmonycareback.Repository.MemberFeatRepository;
 import rofla.back.harmonycareback.Repository.MemberRepository;
 
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -137,9 +136,13 @@ public class MemberFeatService {
             mf.setExtraExplainText(childFeatDTORequest.getExtraExplainText()); // 줄글 -> 키워드 위한 줄글
 
             mf.setMemberIdFeat(memberRepository.findByUsername(username).get()); // 객체 저장
+
             memberFeatRepository.save(mf);
         }
     }
+
+    
+
 
 
     // 하모니 키워드 3개로 줄글 api 호출 [H]
@@ -187,7 +190,7 @@ public class MemberFeatService {
                 "  \"seed\" : 0\n" +
                 "}";
 
-        resultText = completionService.execute(jsonText).getBody();
+        resultText = completionService.executeH(jsonText).getBody();
 
         String[] lines = resultText.split("\n");
 
@@ -228,10 +231,7 @@ public class MemberFeatService {
         return resultText;
     }
 
-    public List<MemberFeat> getAllHarmony(String type) {
-        return memberFeatRepository.findByType("H");
-    }
-
+    // 3. 프론트 수정 텍스트 받아서 저장 [H]
     public void saveTextOfHProfile(SaveTextHProfileDTORequest saveTextHProfileDTORequest, HttpServletRequest http) {
         this.token = http.getHeader("access");
         this.username = jwtUtil.getUsername(token);
@@ -250,6 +250,119 @@ public class MemberFeatService {
         } else {
             throw new RuntimeException("No MemberFeat found for the member");
         }
+    }
 
+    // 아이 줄글로 키워드 3개 추출 [P]
+    public String makeCKeyword(HttpServletRequest http) {
+        this.token = http.getHeader("access");
+        this.username = jwtUtil.getUsername(token);
+        this.role = jwtUtil.getRole(token);
+        String username = this.username;
+
+        // 부모님 객체 불러오기
+        Member member = memberRepository.findByUsername(username).get();
+
+        // 부모님이 대리고 있는 모든 아이 특징 가져옴
+        List<MemberFeat> memberFeats = memberFeatRepository.findByMemberIdFeat(member);
+
+        // 현제 아이는 방금 저장 했으므로 가장 마지막에 있는 데이터
+        MemberFeat memberFeat = memberFeats.getLast();
+
+        String text = memberFeat.getExtraExplainText();
+        System.out.println(text);
+
+        String resultText;
+        String jsonText = "{\n" +
+                "  \"messages\" : [ {\n" +
+                "    \"role\" : \"system\",\n" +
+                "    \"content\" : \"- 이것은 문장 성격 분류기 입니다\\n- 사용자의 글에서 주어진 단어 중 특징을 드러나는 단어 단 3개만 출력합니다\\n\\n- 주어진 단어 : 활발한 / 예의바른 / 사교적인 / 감성적인 / 잘웃는 / 차분한 / 독립적인 / 용감한 / 잘먹는 / 집중력있는 / 규칙을 잘지키는 / 신중한 / 도전적인 / 명량한 / 조심스러운 / 창의적인 / 마음이 따듯한 / 엉뚱한 / 유머러스한 / 다정한 / 수다스러운\\n\\n문장 : 우리 아이는 친구들을 잘 챙겨주고,  예의가 발라요 또한 먹는 걸 좋아해요\\n\\n감정 : 사교적인, 예의바른, 잘먹는\\n###\\n\"\n" +
+                "  }, {\n" +
+                "    \"role\" : \"user\",\n" +
+                "    \"content\" : \"문장 : 우리 아이는 밝고 호기심이 넘치는 성격을 가지고 있습니다. 새로운 것에 대한 탐구심이 강해 항상 질문을 던지고, 다양한 활동에 적극적으로 참여합니다. 친구들과 잘 어울리며, 타인을 배려하는 마음을 지니고 있어 주변에서 사랑받고 있습니다. 가끔은 조금 내성적일 때도 있지만, 자신의 생각을 솔직하게 표현하는 용기가 있습니다. 긍정적이고 성실한 태도로 어려움을 극복하는 모습을 보여줍니다.\"\n" +
+                "  }, {\n" +
+                "    \"role\" : \"assistant\",\n" +
+                "    \"content\" : \"감정 : 사교적인, 감성적인, 도전적인\"\n" +
+                "  }, {\n" +
+                "    \"role\" : \"user\",\n" +
+                "    \"content\" : \"문장 : " + text + "\"\n" +
+                "  } ],\n" +
+                "  \"topP\" : 0.8,\n" +
+                "  \"topK\" : 0,\n" +
+                "  \"maxTokens\" : 256,\n" +
+                "  \"temperature\" : 0.06,\n" +
+                "  \"repeatPenalty\" : 5.0,\n" +
+                "  \"stopBefore\" : [ ],\n" +
+                "  \"includeAiFilters\" : true,\n" +
+                "  \"seed\" : 0\n" +
+                "}";
+
+        resultText = completionService.executeC(jsonText).getBody();
+
+        String[] lines = resultText.split("\n");
+
+        // JSON 파싱에 사용할 변수들을 초기화합니다.
+        boolean resultEventFound = false;
+        StringBuilder jsonStringBuilder = new StringBuilder();
+
+        // 줄 단위로 문자열을 순회합니다.
+        for (String line : lines) {
+            if (line.startsWith("event:result")) {
+                resultEventFound = true;
+                continue; // 다음 줄부터 JSON 데이터를 수집합니다.
+            }
+
+            if (resultEventFound && line.startsWith("data:")) {
+                // "data:" 부분을 제거하고 JSON 데이터를 추가합니다.
+                jsonStringBuilder.append(line.substring(5));
+            } else if (resultEventFound) {
+                // "data:"로 시작하지 않는 줄도 JSON 데이터로 추가합니다.
+                jsonStringBuilder.append(line);
+            }
+        }
+
+        if (!jsonStringBuilder.isEmpty()) {
+            // 수집된 JSON 문자열을 파싱합니다.
+            String jsonString = jsonStringBuilder.toString();
+            JSONObject jsonObject = new JSONObject(jsonString);
+
+            // "message" 객체 안의 "content" 값을 가져옵니다.
+            resultText = jsonObject.getJSONObject("message").getString("content");
+
+        } else {
+            System.out.println("Error: 'event:result' not found or no data to parse.");
+        }
+
+        System.out.println(resultText);
+
+        // 토큰을 저장할 리스트
+        List<String> tokens = new ArrayList<>();
+
+        // " : "을 기준으로 문자열을 나누고, 그 후에 ", "를 기준으로 다시 나눔
+        String[] parts = resultText.split(" : ")[1].split(", ");
+
+        // 필요한 토큰을 리스트에 추가
+        for (String part : parts) {
+            tokens.add(part);
+        }
+
+        memberFeat.setF1C(tokens.get(0));
+        memberFeat.setF2C(tokens.get(1));
+        memberFeat.setF3C(tokens.get(2));
+
+        memberFeatRepository.save(memberFeat);
+
+        // 결과 출력
+        System.out.println("추출된 토큰: " + tokens);
+
+        return resultText;
+    }
+
+    // TODO : 하모니 상세페이지 정보 DTO 전달
+
+    // TODO : 하모니 정렬 알고리즘 테스트 (List 전달)
+
+    // 모든 하모니 출력 [P]
+    public List<MemberFeat> getAllHarmony(String type) {
+        return memberFeatRepository.findByType("H");
     }
 }

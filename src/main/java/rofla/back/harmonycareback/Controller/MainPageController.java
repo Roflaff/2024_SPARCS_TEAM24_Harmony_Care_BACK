@@ -93,5 +93,16 @@ public class MainPageController {
         return ResponseEntity.ok("ok");
     }
 
+    @PutMapping("/saveCKeyword")
+    public ResponseEntity<String> saveCKeyword(HttpServletRequest httpServletRequest) {
+        try {
+            memberFeatService.makeCKeyword(httpServletRequest);
+            return ResponseEntity.ok("ok");
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(409).build();
+        }
+    }
+
 
 }

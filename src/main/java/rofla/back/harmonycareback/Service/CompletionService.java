@@ -14,34 +14,57 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class CompletionService {
 
+    // 공통!!
     @Value("${api.host}")
     private String host;
-
-    @Value("${api.keyH}")
+    @Value("${api.key}")
     private String apiKey;
-
-    @Value("${api.key.primary.valH}")
+    @Value("${api.key.primary.val}")
     private String apiKeyPrimaryVal;
 
     @Value("${api.request.idH}")
-    private String requestId;
+    private String requestIdH;
+    @Value("${api.request.idC}")
+    private String requestIdC;
 
 
     private final RestTemplate restTemplate;
 
 
     // H 하모니 키워드 => 줄 글
-    public ResponseEntity<String> execute(String completionRequest) {
+    public ResponseEntity<String> executeH(String completionHRequest) {
         String url = host + "/testapp/v1/chat-completions/HCX-DASH-001";
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-NCP-CLOVASTUDIO-API-KEY", apiKey);
         headers.set("X-NCP-APIGW-API-KEY", apiKeyPrimaryVal);
-        headers.set("X-NCP-CLOVASTUDIO-REQUEST-ID", requestId);
+        headers.set("X-NCP-CLOVASTUDIO-REQUEST-ID", requestIdH);
         headers.set("Content-Type", "application/json; charset=utf-8");
         headers.set("Accept", "text/event-stream");
 
-        HttpEntity<String> requestEntity = new HttpEntity<>(completionRequest, headers);
+        HttpEntity<String> requestEntity = new HttpEntity<>(completionHRequest, headers);
+
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
+            return response;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // H 하모니 키워드 => 줄 글
+    public ResponseEntity<String> executeC(String completionCRequest) {
+        String url = host + "/testapp/v1/chat-completions/HCX-DASH-001";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("X-NCP-CLOVASTUDIO-API-KEY", apiKey);
+        headers.set("X-NCP-APIGW-API-KEY", apiKeyPrimaryVal);
+        headers.set("X-NCP-CLOVASTUDIO-REQUEST-ID", requestIdC);
+        headers.set("Content-Type", "application/json; charset=utf-8");
+        headers.set("Accept", "text/event-stream");
+
+        HttpEntity<String> requestEntity = new HttpEntity<>(completionCRequest, headers);
 
         try {
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
