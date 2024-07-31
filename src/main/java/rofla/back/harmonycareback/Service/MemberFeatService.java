@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
+import rofla.back.harmonycareback.Dto.ChildFeatDTORequest;
 import rofla.back.harmonycareback.Dto.SaveTextHProfileDTORequest;
 import rofla.back.harmonycareback.Dto.addMemberFeatDTO;
 import rofla.back.harmonycareback.Jwt.JWTUtil;
@@ -97,6 +98,50 @@ public class MemberFeatService {
         }
     }
 
+    // 아이 특징 저장
+    public void addCFeat(ChildFeatDTORequest childFeatDTORequest, HttpServletRequest httpServletRequest) {
+        this.token = httpServletRequest.getHeader("access");
+        this.username = jwtUtil.getUsername(token);
+        this.role = jwtUtil.getRole(token);
+
+        String username = this.username;
+        String role = this.role;
+
+        System.out.println("특징 추가 유저: " + username);
+        List<MemberFeat> allMf = memberFeatRepository.findByMemberIdFeat(memberRepository.findByUsername(username).get());
+        if(role.equals("P")) {
+            String temp = "C1";
+            // 자식이 있으면
+            if (!allMf.isEmpty()) {
+                int i = allMf.size();
+                // 자녀가 이미 존재 할 때 항목 다르게 저장
+                if (i == 1) {
+                    temp = "C2";
+                } else if (i == 2) {
+                    temp = "C3";
+                } else if (i == 3) {
+                    temp = "C4";
+                } else if (i == 4) {
+                    temp = "C5";
+                } else if (i == 5) {
+                    temp = "C6";
+                }
+            }
+            MemberFeat mf = new MemberFeat();
+            mf.setType(temp);
+
+            // 줄글 에서 저장 하는 메서드 만들고 여기서 실행 => 아이의 키워드 3개 추출
+            mf.setExplainText(childFeatDTORequest.getTitle()); // 아이 소개서 제목
+            mf.setSex(childFeatDTORequest.getSex()); // 아이 성별
+            mf.setAge(childFeatDTORequest.getAge()); // 아이 나이
+            mf.setExtraExplainText(childFeatDTORequest.getExtraExplainText()); // 줄글 -> 키워드 위한 줄글
+
+            mf.setMemberIdFeat(memberRepository.findByUsername(username).get()); // 객체 저장
+            memberFeatRepository.save(mf);
+        }
+    }
+
+
     // 하모니 키워드 3개로 줄글 api 호출 [H]
     public String makeHarmonyProfile(HttpServletRequest http) {
         this.token = http.getHeader("access");
@@ -121,7 +166,7 @@ public class MemberFeatService {
         String jsonText = "{\n" +
                 "  \"messages\" : [ {\n" +
                 "    \"role\" : \"system\",\n" +
-                "    \"content\" : \"- 너는 아이를 돌보는 일자리에 지원하는 \\\"시니어\\\" 역할이다.\\n- 친근하고 정감있는 말투로 자기소개를 한다.\\n- 사용자가 입력한 단어 3개로 무조건 300자 이상의 문장을 만든다\\n- 각 문단은 들여쓰기로 구분해\\n- 결과는 보기 쉬워야 한다\\n\\n단어 : 책임감 / 체력 / 소통능력 / 응급처치및안전관리 / 인내심 / 문제해결능력 / 관찰력 / 조리및영양지식 / 위생관리 / 감정조절능력 / 안정감 / 문화적다양성\\n###\\n\"\n" +
+                "    \"content\" : \"- 너는 아이를 돌보는 일자리에 지원하는 \\\"시니어\\\" 역할이다.\\n- 친근하고 정감있는 말투로 자기소개를 한다.\\n- 사용자가 입력한 단어 3개로 무조건 600자 이상의 문장을 만든다\\n- 각 문단은 들여쓰기로 구분해\\n- 결과는 보기 쉬워야 한다\\n\\n단어 : 책임감 / 체력 / 소통능력 / 응급처치및안전관리 / 인내심 / 문제해결능력 / 관찰력 / 조리및영양지식 / 위생관리 / 감정조절능력 / 안정감 / 문화적다양성\\n###\\n\"\n" +
                 "  }, {\n" +
                 "    \"role\" : \"user\",\n" +
                 "    \"content\" : \"단어 : 관찰력 / 안정감 / 문화적 다양성\"\n" +

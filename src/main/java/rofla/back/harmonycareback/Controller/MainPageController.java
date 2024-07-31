@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import rofla.back.harmonycareback.Dto.ChildFeatDTORequest;
 import rofla.back.harmonycareback.Dto.ListOfHermonyRespone;
 import rofla.back.harmonycareback.Dto.SaveTextHProfileDTORequest;
 import rofla.back.harmonycareback.Dto.addMemberFeatDTO;
@@ -84,6 +85,12 @@ public class MainPageController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(409).build();
         }
+    }
+
+    @PostMapping("/addCFeat")
+    public ResponseEntity<String> saveTextOfCProfile(@RequestBody ChildFeatDTORequest childFeatDTORequest, HttpServletRequest httpServletRequest) {
+        memberFeatService.addCFeat(childFeatDTORequest, httpServletRequest);
+        return ResponseEntity.ok("ok");
     }
 
 

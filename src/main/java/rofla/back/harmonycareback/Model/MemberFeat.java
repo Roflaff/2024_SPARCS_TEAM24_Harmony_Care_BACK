@@ -41,8 +41,8 @@ public class MemberFeat {
     private String sex;
 
     // 아이 경우 나이
-    @Column(name = "age")
-    private LocalDate age;
+    @Column(name = "age", length = 10)
+    private String age;
 
     // 추가 설명 필요할 때
     @Column(name = "extra_explain_text", length = 3000)
